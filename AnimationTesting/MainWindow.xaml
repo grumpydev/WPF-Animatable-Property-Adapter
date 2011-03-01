@@ -1,0 +1,62 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" x:Class="AnimationTesting.MainWindow"
+        xmlns:behaviors="clr-namespace:AnimationTesting.Animation"
+        Title="MainWindow" Height="350" Width="525">
+	<Window.Resources>
+		<Storyboard x:Key="OnLoaded1" AutoReverse="True" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Left)" Storyboard.TargetName="rectangle">
+				<EasingDoubleKeyFrame KeyTime="0:0:2" Value="398"/>
+			</DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Canvas.Top)" Storyboard.TargetName="rectangle">
+				<EasingDoubleKeyFrame KeyTime="0:0:2" Value="185"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="OnLoaded2" AutoReverse="True" RepeatBehavior="Forever">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="rectangle">
+				<EasingDoubleKeyFrame KeyTime="0:0:2" Value="168"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+	</Window.Resources>
+	<Window.Triggers>
+		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+			<BeginStoryboard Storyboard="{StaticResource OnLoaded1}"/>
+			<BeginStoryboard x:Name="OnLoaded2_BeginStoryboard" Storyboard="{StaticResource OnLoaded2}"/>
+		</EventTrigger>
+	</Window.Triggers>
+    <Grid x:Name="ContentRoot">
+        <Canvas>
+            <Rectangle x:Name="rectangle" Fill="Red" Width="50" Height="50" Canvas.Top="{Binding X, Mode=OneTime}" Canvas.Left="{Binding Y, Mode=OneTime}" RenderTransformOrigin="0.5,0.5" >
+                <Rectangle.RenderTransform>
+                	<TransformGroup>
+                		<ScaleTransform/>
+                		<SkewTransform/>
+	                    <RotateTransform x:Name="RotateTransform" CenterX="0.5" CenterY="0.5"/>
+                		<TranslateTransform/>
+                	</TransformGroup>
+                </Rectangle.RenderTransform>
+
+                <i:Interaction.Behaviors>
+                    <behaviors:AnimatablePositionBehavior/>
+                    <behaviors:AnimatableAngleBehavior SourceObject="{Binding ElementName=RotateTransform}" />
+                </i:Interaction.Behaviors>
+            </Rectangle>
+        </Canvas>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TextBlock Text="{Binding X, StringFormat=F2}"/>
+            <TextBlock><Run Text=","/></TextBlock>
+            <TextBlock Text="{Binding Y, StringFormat=F2}"/>
+            <TextBlock><Run Text=","/></TextBlock>
+            <TextBlock Text="{Binding Angle, StringFormat=F2}"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <TextBlock x:Name="RealX"/>
+            <TextBlock><Run Text=","/></TextBlock>
+            <TextBlock x:Name="RealY"/>
+        </StackPanel>
+
+        <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding UpdateValuesCommand}" Content="Update Values"/>
+    </Grid>
+</Window>
